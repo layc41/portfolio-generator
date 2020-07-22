@@ -1,4 +1,6 @@
+const fs = require('fs');
 const inquirer = require('inquirer');
+const generatePage = require('./src/page-template');
 
 const promptUser = () => {
   return inquirer.prompt([
@@ -60,19 +62,19 @@ const promptProject = portfolioData => {
 
 
   return inquirer.prompt([
-    // {
-    //   type: 'input',
-    //   name: 'name',
-    //   message: 'What is your name? (Required)',
-    //   validate: nameInput => {
-    //     if (nameInput) {
-    //       return true;
-    //     } else {
-    //       console.log('Please enter your name!');
-    //       return false;
-    //     }
-    //   }
-    // },
+    {
+      type: 'input',
+      name: 'name',
+      message: 'What is the name of your project? (Required)',
+      validate: nameInput => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log('Please enter your name!');
+          return false;
+        }
+      }
+    },
     {
       type: 'input',
       name: 'description',
@@ -129,8 +131,14 @@ const promptProject = portfolioData => {
 };
 
 
+
 promptUser()
   .then(promptProject)
   .then(portfolioData => {
-    console.log(portfolioData);
+    const pageHTML = generatePage(portfolioData);
+
+    fs.writeFile('./index.html', pageHTML, err => {
+      if (err) throw new Error(err);
+
+    });
   });
